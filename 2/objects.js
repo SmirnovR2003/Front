@@ -1,11 +1,12 @@
 const editor = {
-    selectedBlocks: [block2, block3]
+    selectedBlocks: [block2, block3],
+    canvas: canvas
 }
 
 const canvas = {
     size: [800, 600],
     background: 'background1',
-    filter: 'null',
+    filter: null,
     blocks: [block1, block2, block3]
 }
 

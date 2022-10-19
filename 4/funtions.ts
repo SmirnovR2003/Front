@@ -1,68 +1,77 @@
 type Editor = {
-    slectedBlocks: Block[]
+    slectedBlocks: Block[],
+    canvas: Canvas
 }
 
 type Canvas = {
-    size: number[],
-    background: string,
-    filter: string,
+    size: Size,
+    background: string | null,
+    filter: string | null,
     blocks: Block[]
 }
 
 type Block = {
-    background: string,
-    location: number[],
-    contentType: string,
+    background: string | null,
+    location: Locations,
+    contentType: 'text' | 'picture' | 'artObject',
     content: Chars | Picture | ArtObject
 } 
 
 type Chars = {
-    size: number[],
+    size: Size,
     color: string,
     content: string
 }
 
 type Picture = {
-    size: number[],
-    filter: string,
+    size: Size,
+    filter: string | null,
     path: string
 }
 
 type ArtObject = {
     content: Circle | Rectangle | Triangle | DefPicture,
-    contentType: string
+    contentType: 'circle' | 'rectangle' | 'triangle' | 'defPicture'
 }
 
 type Circle = {
-    center: number[],
+    center: Locations,
     radius: number,
     color: string    
 }
 
 type Rectangle = {
-    leftTop: number[],
-    rightBottom: number[],
+    leftTop: Locations,
+    rightBottom: Locations,
     color: string     
 }
 
 type Triangle = {
-    locationPoint1: number[], 
-    locationPoint2: number[],
-    locationPoint3: number[],
+    locationPoint1: Locations, 
+    locationPoint2: Locations,
+    locationPoint3: Locations,
     color: string 
 }
 
 type DefPicture = {
     path: string,
     color: string ,
-    size: number[]
+    size: Size
 }
 
+type Size = {
+    wigth: number,
+    heigth: number
+}
+
+type Locations = {
+    x: number,
+    y: number
+}
 
 //editor
-function editEditor(editor: Editor, newBlocks: Block[]){
+function setectBlocks(editor: Editor, newBlocks: Block[]){
     let neweditor: Editor = editor;
-    let array = [];
     neweditor.slectedBlocks = newBlocks;
     return neweditor;
 }
@@ -81,49 +90,51 @@ function addBlock(canvas: Canvas, block: Block){
     newCanvas.blocks.push(block);
     return newCanvas;
 } 
-function deleteBlock(canvas: Canvas, block: Block){
+function deleteBlock(canvas: Canvas, editor: Editor){
     let newCanvas: Canvas = canvas;
-    newCanvas.blocks.splice(canvas.blocks.indexOf(block));
+    editor.slectedBlocks.forEach(element => {
+        newCanvas.blocks.splice(canvas.blocks.indexOf(element));
+    });
     return newCanvas;
 } 
-function editCanvasSize(canvas: Canvas, newSize: number[]){
+function editCanvasSize(canvas: Canvas, newSize: Size){
     let newCanvas: Canvas = canvas;
     newCanvas.size = newSize;
     return newCanvas;
 }
-function editCanvasBackground(canvas: Canvas, newBackground: string){
+function editCanvasBackground(canvas: Canvas, newBackground: string | null){
     let newCanvas: Canvas = canvas;
     newCanvas.background = newBackground;
     return newCanvas;
 }
-function editCanvasFilter(canvas: Canvas, newFilter: string){
+function editCanvasFilter(canvas: Canvas, newFilter: string | null){
     let newCanvas: Canvas = canvas;
     newCanvas.filter = newFilter;
     return newCanvas;
 }
 
 //block
-function createBlock(content: Chars | Picture | ArtObject,){
+function createBlock(content: Chars | Picture | ArtObject, contentType:'text' | 'picture' | 'artObject'){
     return{
-        background: "null",
+        background: null,
         location: [0, 0],
-        contentType: typeof content,
+        contentType: contentType,
         content: content
     }
 }
-function editBlockBackground(block: Block, newBackground: string){
-    let newBlock: Block = block;
+function editBlockBackground(editor: Editor, newBackground: string | null){
+    let newBlock: Block = editor.slectedBlocks[0];
     newBlock.background = newBackground;
     return newBlock;
 }
-function editBlockLocation(block: Block, newLocation: number[]){
-    let newBlock: Block = block;
+function editBlockLocation(editor: Editor, newLocation: Locations){
+    let newBlock: Block = editor.slectedBlocks[0];
     newBlock.location = newLocation;
     return newBlock;
 }
 
 //chars
-function editCharsSize(chars: Chars, newSize: number[]){
+function editCharsSize(chars: Chars, newSize: Size){
     let newChars: Chars = chars;
     newChars.size = newSize;
     return newChars;
@@ -147,19 +158,19 @@ function createPicture(path: string){
         path: path
     };
 }
-function editPictureSize(picture: Picture, newSize: number[]){
+function editPictureSize(picture: Picture, newSize: Size){
     let newPicture: Picture = picture;
     newPicture.size = newSize;
     return newPicture;
 }
-function editPictureFilter(picture: Picture, newfilter: string){
+function editPictureFilter(picture: Picture, newfilter: string | null){
     let newPicture: Picture = picture;
     newPicture.filter = newfilter;
     return newPicture;
 }
 
 //art
-function createArtObject(artObject: ArtObject, contentType: string, content: Circle | Rectangle | Triangle | DefPicture){
+function createArtObject(contentType: 'circle' | 'rectangle' | 'triangle' | 'defPicture', content: Circle | Rectangle | Triangle | DefPicture){
     return {
         content: content,
         contentType: contentType
@@ -167,14 +178,14 @@ function createArtObject(artObject: ArtObject, contentType: string, content: Cir
 }
 
 //circle
-function createCircle(path: string){
+function createCircle(){
     return {
-        size: [100, 100],
-        filter: "null",
-        path: path
+        center: [100, 100],
+        radius: 100,
+        color: "black"
     };
 }
-function moveCircleCenter(circle: Circle, newCenter: number[]){
+function moveCircleCenter(circle: Circle, newCenter: Locations){
     let newCircle: Circle = circle;
     newCircle.center = newCenter;
     return newCircle;
@@ -203,12 +214,12 @@ function editRectangleColor(rectangle: Rectangle, newColor: string){
     newRectangle.color = newColor;
     return newRectangle;
 }
-function editRectangleLeftTop(rectangle: Rectangle, newLeftTop: number[]){
+function editRectangleLeftTop(rectangle: Rectangle, newLeftTop: Locations){
     let newRectangle: Rectangle = rectangle;
     newRectangle.leftTop = newLeftTop;
     return newRectangle;
 }
-function editRectangleRightBottom(rectangle: Rectangle, newrightBottom: number[]){
+function editRectangleRightBottom(rectangle: Rectangle, newrightBottom: Locations){
     let newRectangle: Rectangle = rectangle;
     newRectangle.rightBottom = newrightBottom;
     return newRectangle;
@@ -223,17 +234,17 @@ function createTriangle(){
         color: "black"
     };
 }
-function moveTriangleLocationPoint1(triangle: Triangle, newlocation: number[]){
+function moveTriangleLocationPoint1(triangle: Triangle, newlocation: Locations){
     let newTriangle: Triangle = triangle;
     newTriangle.locationPoint1 = newlocation;
     return newTriangle;
 }
-function moveTriangleLocationPoint2(triangle: Triangle, newlocation: number[]){
+function moveTriangleLocationPoint2(triangle: Triangle, newlocation: Locations){
     let newTriangle: Triangle = triangle;
     newTriangle.locationPoint2 = newlocation;
     return newTriangle;
 }
-function moveTriangleLocationPoint3(triangle: Triangle, newlocation: number[]){
+function moveTriangleLocationPoint3(triangle: Triangle, newlocation: Locations){
     let newTriangle: Triangle = triangle;
     newTriangle.locationPoint3 = newlocation;
     return newTriangle;
@@ -257,7 +268,7 @@ function editDefPictureColor(defPicture: DefPicture, newColor: string){
     newDefPicture.color = newColor;
     return newDefPicture;
 }
-function editDefPictureSize(defPicture: DefPicture, newSize: number[]){
+function editDefPictureSize(defPicture: DefPicture, newSize: Size){
     let newDefPicture: DefPicture = defPicture;
     newDefPicture.size = newSize;
     return newDefPicture;
