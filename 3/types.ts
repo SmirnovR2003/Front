@@ -20,7 +20,11 @@ type Block = {
 type Chars = {
     size: Size,
     color: string,
-    content: string
+    content: string,
+    fontSize: Size,
+    bold: boolean,
+    italic: boolean,
+    underline: boolean
 }
 
 type Picture = {
@@ -121,13 +125,9 @@ function createBlock(content: Chars | Picture | ArtObject, contentType:'text' | 
         contentType: contentType,
         content: content
     }
-    return 
+    return newBlock
 }
 function editBlockBackground(editor: Editor, newBackground: string | null){
-    let newBlock: Block = editor.slectedBlocks[0];
-    return newBlock;
-}
-function editBlockLocation(editor: Editor, newLocation: Locations){
     let newBlock: Block = editor.slectedBlocks[0];
     return newBlock;
 }
@@ -142,6 +142,22 @@ function editCharsColor(chars: Chars, newColor: string){
     return newChars;
 }
 function editCharsContent(chars: Chars, newContent: string){
+    let newChars: Chars = chars;
+    return newChars;
+}
+function editCharsFontSize(chars: Chars, newfontSize: Size){
+    let newChars: Chars = chars;
+    return newChars;
+}
+function editCharsBold(chars: Chars, newBold: boolean){
+    let newChars: Chars = chars;
+    return newChars;
+}
+function editCharsItalic(chars: Chars, newitalic: boolean){
+    let newChars: Chars = chars;
+    return newChars;
+}
+function editCharsUnderline(chars: Chars, newUnderline: boolean){
     let newChars: Chars = chars;
     return newChars;
 }
@@ -268,12 +284,12 @@ function editTriangleColor(triangle: Triangle, newColor: string){
 //defPicture
 function createDefPicture(path: string){
     let newDefPicture: DefPicture = {
-    path: path,
-    color: "black",
-    size: {
-        width: 100,
-        heigth: 100
-    }
+        path: path,
+        color: "black",
+        size: {
+            width: 100,
+            heigth: 100
+        }
     };
     return newDefPicture
 }
