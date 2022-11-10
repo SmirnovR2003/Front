@@ -4,7 +4,10 @@ const editor = {
 }
 
 const canvas = {
-    size: [800, 600],
+    size: {
+        width: 255, 
+        heigth: 305
+    },
     background: 'background1',
     filter: null,
     blocks: [block1, block2, block3]
@@ -13,41 +16,64 @@ const canvas = {
 
 const block1 = {
     background: 'background2',
-    location: [100,  200],
+    location: {
+        x: 100,  
+        y: 200
+    },
     contentType: 'text',
     content: text1
 } 
 
 const text1 = {
-    font: ['default', [20, 30]],
+    size: {
+        width: 20, 
+        heigth: 30
+    },
     color: 'red',
-    content: 'abc'
+    content: 'abc',
+    fontSize: {
+        width: 20, 
+        heigth: 30
+    },
+    bold: false,
+    italic: false,
+    underline: false
 }
 
 
 const block2 = {
     background: 'background2',
-    location: [100,  200],
+    location: {
+        x: 100,  
+        y: 250
+    },
     contentType: 'picture',
     content: picture1
 } 
 
 const picture1 = {
-    size: [400, 300],
-    filter: 'null',
+    size: {
+        width: 200, 
+        heigth: 300
+    },
+    filter: null,
     path: 'picture/cat.png'
 }
 
 
 const block3 = {
     background: 'background2',
-    location: [100,  200],
+    location: {
+        x: 150,  
+        y: 250
+    },
     contentType: 'artObject',
     content: artObject1
 } 
 
 const artObject1 = {
-    content: circle1   
+    content: circle1,
+    contentType: 'circle'   
 }
 
 const circle1 = {
