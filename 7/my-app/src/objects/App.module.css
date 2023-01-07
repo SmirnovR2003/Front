@@ -1,0 +1,5 @@
+.box{
+    border: solid;
+    position: relative;
+    overflow: hidden;
+}

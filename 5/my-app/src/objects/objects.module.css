@@ -1,0 +1,7 @@
+.box{
+    margin: 0;
+    padding: 0;
+    position: absolute; 
+    background: rgba(161,21,207, 0);
+    border: none;
+}

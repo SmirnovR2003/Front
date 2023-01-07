@@ -1,27 +1,28 @@
 import React from "react";
-import { Circles } from "./circle";
-import { Rectangles } from "./rectangle";
-import { Triangles } from "./triangle";
-import {ArtObject} from "../funtions"
+import { Rectangles } from "./Rectangle";
+import { Triangles } from "./Triangle";
+import { ArtObject } from "../funtions"
+import { Circles } from "./Circle";
 
 interface IArtObject {
     artObject: ArtObject,
-    key: number
+    key: number,
+    position: {x: number, y: number},
+    zIndex: number
 }
 
 export function ArtObjects(props: IArtObject){
-    return(
-        (props.artObject.content.type === "circle") ?
-        <Circles circle={props.artObject.content} key={props.key}></Circles>
-        
-        :(props.artObject.content.type === "rectangle") ?
-        <Rectangles rect={props.artObject.content} key={props.key}></Rectangles>
+    switch (props.artObject.content.type) {
+        case "circle":
+            return <Circles circle={props.artObject.content} key={props.key} position={props.position} zIndex={props.zIndex} ></Circles>
 
-        :(props.artObject.content.type === "triangle") ?
-        <Triangles triangle={props.artObject.content} key={props.key}></Triangles>
+        case "rectangle":
+            return <Rectangles rect={props.artObject.content} key={props.key} position={props.position} zIndex={props.zIndex} ></Rectangles>
 
-        : <></>
-    )
-
-    
+        case "triangle":
+            return <Triangles triangle={props.artObject.content} key={props.key} position={props.position} zIndex={props.zIndex} ></Triangles>
+            
+        default:
+            return null;
+    } 
 }

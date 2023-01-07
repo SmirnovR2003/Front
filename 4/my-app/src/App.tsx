@@ -1,26 +1,28 @@
 import React from 'react';
-import './App.css';
-import {Text} from './objects/text'
-import {Pictures} from './objects/picture'
-import { ArtObjects } from './objects/artObject';
+import {Text} from './objects/Text'
+import {Pictures} from './objects/Picture'
+import { ArtObjects } from './objects/ArtObject';
 import {editor} from './objects'
-function App(): JSX.Element {
-  return <>{
-    editor.canvas.blocks.map(block =>
+import styles from './App.module.css'
 
-       (block.content.contentType === 'picture') ?
-        <Pictures picture={block.content} key={block.id}></Pictures>
-
-      :(block.content.contentType === 'text') ? 
-        <Text char={block.content} key={block.id}></Text>
-
-      :(block.content.contentType === 'artObject') ? 
-
-      (block.content.contentType === 'artObject') ? 
-        <ArtObjects artObject={block.content} key={block.id}></ArtObjects>
-        :<></>
-      :<></>
-    )
-    }</>
+function App() {
+  return <div style={{width: editor.canvas.size.width, height: editor.canvas.size.heigth}} className={styles.box} >{
+    editor.canvas.blocks.map(block =>{
+      switch (block.content.contentType) {
+        case "picture":
+          return <Pictures picture={block.content} key={block.id} position={block.location} zIndex={block.zIndex} ></Pictures>
+  
+        case "text":
+          return <Text char={block.content} key={block.id} position={block.location} zIndex={block.zIndex} ></Text>
+  
+        case "artObject": 
+          return <ArtObjects artObject={block.content} key={block.id} position={block.location} zIndex={block.zIndex} ></ArtObjects>
+          
+        default:
+          return null;
+      }
+    })
+  }</div>
 }
+
 export default App;

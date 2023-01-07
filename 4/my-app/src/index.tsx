@@ -1,14 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
-import {editor} from './objects'
+import { CreateObject } from './tools/CreateObject';
+import styles from './index.module.css'
+import { CreateTemplates } from './tools/Templates';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <div align_content style={{display: 'flex', alignContent: 'center'}}>
+  <div className={styles.box}>
+    <CreateObject />
+    <CreateTemplates />
     <App />
   </div>
     

@@ -1,0 +1,9 @@
+.box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 5px;
+    padding: 0px;
+} 

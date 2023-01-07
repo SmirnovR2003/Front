@@ -15,6 +15,7 @@ export type Block = {
     background: string | null,
     location: Locations,
     content: Chars | Picture | ArtObject,
+    zIndex: number,
     id: number
 } 
 
@@ -23,7 +24,7 @@ export type Chars = {
     size: Size,
     color: string,
     content: string,
-    fontSize: Size,
+    fontSize: number,
     bold: boolean,
     italic: boolean,
     underline: boolean
@@ -38,9 +39,8 @@ export type Picture = {
 
 export type ArtObject = {
     contentType: 'artObject',
-    content: Circle | Rectangle | Triangle | DefPicture
+    content: Circle | Rectangle | Triangle
 }
-
 export type Circle = {
     center: Locations,
     radius: number,
@@ -62,13 +62,6 @@ export type Triangle = {
     color: string,
     type: 'triangle' 
 }
-
-export type DefPicture = {
-    path: string,
-    color: string ,
-    size: Size,
-    type: 'defPicture'
-} 
 
 
 export type Size = {
@@ -147,7 +140,8 @@ function createBlock(content: Chars | Picture | ArtObject, id: number): Block{
             y: 0
         },
         content: content,
-        id:id
+        zIndex: 1,
+        id: id
     }
 }
 function editBlockBackground(block: Block, newBackground: string | null): Block{
@@ -173,10 +167,7 @@ function createChars(): Chars{
         },
         color: 'black',
         content: '',
-        fontSize: {
-            width: 100, 
-            heigth: 100,
-        },
+        fontSize: 200,
         bold: false,
         italic: false,
         underline: false
@@ -200,7 +191,7 @@ function editCharsContent(chars: Chars, newContent: string): Chars{
         content: newContent,
     }
 }
-function editCharsFontSize(chars: Chars, newfontSize: Size): Chars{
+function editCharsFontSize(chars: Chars, newfontSize: number): Chars{
     return {
         ...chars,
         fontSize: newfontSize,
@@ -251,7 +242,7 @@ function editPictureFilter(picture: Picture, newFilter: string | null): Picture{
 }
 
 //art
-function createArtObject(content: Circle | Rectangle | Triangle | DefPicture): ArtObject{
+function createArtObject(content: Circle | Rectangle | Triangle): ArtObject{
     return {
         content: content,
         contentType: "artObject"
@@ -364,30 +355,5 @@ function editTriangleColor(triangle: Triangle, newColor: string): Triangle{
     return {
         ...triangle,
         color: newColor,
-    }
-}
-
-//defPicture
-function createDefPicture(path: string): DefPicture{
-    return {
-        path: path,
-        color: "black",
-        size: {
-            width: 100,
-            heigth: 100
-        },
-        type: "defPicture"
-    };
-}
-function editDefPictureColor(defPicture: DefPicture, newColor: string): DefPicture{
-    return {
-        ...defPicture,
-        color: newColor,
-    }
-}
-function editDefPictureSize(defPicture: DefPicture, newSize: Size): DefPicture{
-    return {
-        ...defPicture,
-        size: newSize,
     }
 }
