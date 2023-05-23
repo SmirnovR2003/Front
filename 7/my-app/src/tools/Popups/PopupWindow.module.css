@@ -9,8 +9,12 @@
 }
    
 .box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: space-around;
     position: relative;
-    width: 70%;
+    width: 75%;
     margin: 0 auto;
     height: auto;
     max-height: 70vh;
@@ -20,14 +24,17 @@
     padding: 20px;
     border: 1px solid #999;
     overflow: auto;
-    pointer-events: all;
 }
    
+.content{
+    margin: 5px;
+}
+
 .closeIcon {
     content: 'x';
     cursor: pointer;
     position: fixed;
-    right: calc(15% - 30px);
+    right: calc(10%);
     top: calc(100vh - 85vh - 33px);
     background: #ededed;
     width: 25px;

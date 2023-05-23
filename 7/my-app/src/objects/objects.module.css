@@ -5,4 +5,7 @@
     background: rgba(161,21,207, 0);
     border: none;
     overflow: hidden;
+    z-index: 0;
 }
+
+

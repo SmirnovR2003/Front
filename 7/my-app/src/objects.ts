@@ -1,4 +1,4 @@
-import { ArtObject, Block, Canvas, Chars, Ellipse, State, generateId, Picture, Rectangle, Triangle } from "./store/functions/funtions"
+import { ArtObject, Block, Canvas, Chars, Ellipse, State, generateId, Picture, Rectangle, Triangle, createCanvas } from "./store/functions/funtions"
 
 const triangle1: Triangle = {
     locationPoint1: { x: 10, y: 100 },
@@ -126,11 +126,17 @@ const canvas: Canvas = {
     blocks: [block1, block2, block3, block4, block5]
 }
 
-export const editor1: State = {
-    selectedBlocks: [block2, block3],
-    canvas: canvas,
+let templates: Canvas[] = []
+
+export function setTemplates(template: Canvas){
+    templates.push(template)
+}
+
+export let editor1: State = {
+    selectedBlocks: [],
+    canvas: createCanvas(),
     history: [canvas],
-    templates: [],
+    templates: templates,
     historyIndex: 0
 }
 

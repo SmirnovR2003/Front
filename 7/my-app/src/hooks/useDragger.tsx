@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
-import { editBlockLocation, Locations } from "../store/functions/funtions";
-import { dispatch, getElementById, getState } from "../state";
+import { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { Locations } from "../store/functions/funtions";
 
-export const useDragger = (ref: HTMLDivElement | null, parentRef: HTMLDivElement | null, id:string, startLocation: Locations) => {
+export const useDragger = (ref: HTMLDivElement | null, id:string, startLocation: Locations) => {
     const isClicked = useRef<boolean>(false);
-    
+    const dispatch = useDispatch()
+
     const coords = useRef<{
         startX: number,
         startY: number,
@@ -29,21 +30,24 @@ export const useDragger = (ref: HTMLDivElement | null, parentRef: HTMLDivElement
 
 
         const onMouseDown = (e: MouseEvent) => {
-            e.preventDefault()
             isClicked.current = true
             coords.current.startX = e.clientX
             coords.current.startY = e.clientY
         } 
 
         const onMouseUp = (e: MouseEvent) => {
-            if(!isClicked.current) return;
+            e.preventDefault()
+            
+            if(!isClicked.current && (coords.current.lastX === container.offsetLeft && coords.current.lastY === container.offsetTop)) return;
+
             isClicked.current = false;
             coords.current.lastX = container.offsetLeft
             coords.current.lastY = container.offsetTop
             let x = coords.current.lastX;
             let y = coords.current.lastY;
-
-            dispatch(editBlockLocation, ['addToHistory', id, {x, y}])
+            dispatch({type: "EDIT_BLOCK_LOCATION", id: id, position: { x: x, y: y}})
+                        
+            dispatch({type: "ADD_TO_HISTORY"})
         } 
 
         const onMouseMove = (e: MouseEvent) => {

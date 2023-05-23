@@ -1,3 +1,4 @@
+
 export type State = {
     selectedBlocks: Block[],
     canvas: Canvas,
@@ -94,7 +95,7 @@ export function setectBlocks(State: State, ids: string[]): State {
         }}),
     }
 }
-export function createState(): State{
+export function createState(templates: any): State{
     return {
         selectedBlocks: [],
         canvas: {
@@ -115,7 +116,7 @@ export function createState(): State{
             filter: null,
             blocks: []
         }],
-        templates:[],
+        templates:templates,
         historyIndex: 0
     }
 } 
@@ -133,8 +134,22 @@ export function deleteAllBlocks(State:State): State{
     }
 } 
 
-//history
+//templates
+export function addTemplate(State: State): State{
+    return{
+        ...State,
+        templates: [...State.templates, State.canvas]
+    }    
+}
+export function selectTemplate(State: State, canvas: Canvas): State{
+    
+    return{
+        ...State,
+        canvas: canvas
+    }    
+}
 
+//history
 export function addToHistory(State: State): State{
     let count = 0;
     return{
@@ -167,7 +182,7 @@ export function prevHistory(State: State){
 
 export function currHistory(State: State){
     console.log(State)
-    if(State.historyIndex == State.history.length - 1){
+    if(State.historyIndex === State.history.length - 1){
         return{
             ...State
         }
@@ -183,10 +198,8 @@ export function currHistory(State: State){
 }
 
 // canvas
-export function createCanvas(State: State): State{
+export function createCanvas(): Canvas{
     return {
-        ...State,
-        canvas: {
             size: {
                 width: 800, 
                 heigth: 600
@@ -194,9 +207,24 @@ export function createCanvas(State: State): State{
             background: null,
             filter: null,
             blocks: []
-        }
+        
     }
 } 
+export function isSelected(State: State, id: string): boolean{
+
+    let isSelected = false
+
+    State.selectedBlocks.forEach( e => {
+        if(e.id == id) {
+            isSelected = true
+        }
+    })
+
+    return isSelected
+    
+} 
+
+
 
 export function addNewBlock(canvas: Canvas, block: Block): Canvas{
     return {
@@ -229,7 +257,7 @@ export function editCanvasSize(State: State, payload: any): State{
         ...State,
         canvas: {
             ...State.canvas,
-            size: payload[1],
+            size: payload.size,
         }
     }
 
@@ -239,7 +267,7 @@ export function editCanvasBackground(State: State, payload: any): State{
         ...State,
         canvas: {
             ...State.canvas,
-            background: payload[1],
+            background: payload.path,
         }
     }
 }
@@ -248,7 +276,7 @@ export function editCanvasFilter(State: State, payload: any): State{
         ...State,
         canvas: {
             ...State.canvas,
-            filter: payload[1],
+            filter: payload.filter,
         }
     }
 }
@@ -272,10 +300,10 @@ export function editBlockBackground(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     return {
                         ...e,
-                        background: payload[2],
+                        background: payload.background,
                     }
                 }
                 return e
@@ -289,13 +317,10 @@ export function editBlockLocation(State: State, payload: any): State {
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     return {
                         ...e,
-                        location: {
-                            x: payload[2].x,
-                            y: payload[2].y
-                        },
+                        location: payload.position
                     }
                 }
                 return e
@@ -326,16 +351,13 @@ export function editCharsSize(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            size: {
-                                width: payload[2].dw,
-                                heigth: payload[2].dh
-                            }
+                            size: payload.size
                         }
                     }
                 }
@@ -350,13 +372,13 @@ export function editCharsColor(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            color: payload[2]
+                            color: payload.color
                         }
                     }
                 }
@@ -371,13 +393,13 @@ export function editCharsContent(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            content: payload[2]
+                            content: payload.content
                         }
                     }
                 }
@@ -392,13 +414,13 @@ export function editCharsFontSize(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            fontSize: payload[2]
+                            fontSize: payload.fontSize
                         }
                     }
                 }
@@ -413,13 +435,13 @@ export function editCharsBold(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            bold: payload[2]
+                            bold: !e.content.bold
                         }
                     }
                 }
@@ -434,13 +456,13 @@ export function editCharsItalic(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            italic: payload[2]
+                            italic: !e.content.italic
                         }
                     }
                 }
@@ -455,13 +477,13 @@ export function editCharsUnderline(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'text')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            underline: payload[2]
+                            underline: !e.content.underline
                         }
                     }
                 }
@@ -485,22 +507,19 @@ export function createPicture(path: string): Picture{
     };
 }
 export function editPictureSize(State: State, payload: any): State{
-    console.log(payload)
+  
     return {
         ...State,
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'picture')
                     return {
                         ...e,
                         content:{
                             ...e.content,
-                            size: {
-                                width: payload[2].dw, 
-                                heigth: payload[2].dh
-                            }
+                            size: payload.size
                         }
                     }
                 }
@@ -509,26 +528,16 @@ export function editPictureSize(State: State, payload: any): State{
         }
     }
 }
-export function editPictureFilter(State: State, payload: any): State{
+export function createSun(path: string): Picture{
     return {
-        ...State,
-        canvas:{
-            ...State.canvas,
-            blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
-                    if(e.content.contentType === 'picture')
-                    return {
-                        ...e,
-                        content:{
-                            ...e.content,
-                            filter: payload[2]
-                        }
-                    }
-                }
-                return e
-            })
-        }
-    }
+        contentType: "picture",
+        size: {
+            width: 100, 
+            heigth: 100,
+        },
+        filter: null,
+        path: "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDM2IDM2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiBjbGFzcz0iaWNvbmlmeSBpY29uaWZ5LS10d2Vtb2ppIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij48cGF0aCBmaWxsPSIjRkZBQzMzIiBkPSJNMTYgMnMwLTIgMi0yczIgMiAyIDJ2MnMwIDItMiAycy0yLTItMi0yVjJ6bTE4IDE0czIgMCAyIDJzLTIgMi0yIDJoLTJzLTIgMC0yLTJzMi0yIDItMmgyek00IDE2czIgMCAyIDJzLTIgMi0yIDJIMnMtMiAwLTItMnMyLTIgMi0yaDJ6bTUuMTIxLTguNzA3czEuNDE0IDEuNDE0IDAgMi44MjhzLTIuODI4IDAtMi44MjggMEw0Ljg3OCA4LjcwOHMtMS40MTQtMS40MTQgMC0yLjgyOWMxLjQxNS0xLjQxNCAyLjgyOSAwIDIuODI5IDBsMS40MTQgMS40MTR6bTIxIDIxczEuNDE0IDEuNDE0IDAgMi44MjhzLTIuODI4IDAtMi44MjggMGwtMS40MTQtMS40MTRzLTEuNDE0LTEuNDE0IDAtMi44MjhzMi44MjggMCAyLjgyOCAwbDEuNDE0IDEuNDE0em0tLjQxMy0xOC4xNzJzLTEuNDE0IDEuNDE0LTIuODI4IDBzMC0yLjgyOCAwLTIuODI4bDEuNDE0LTEuNDE0czEuNDE0LTEuNDE0IDIuODI4IDBzMCAyLjgyOCAwIDIuODI4bC0xLjQxNCAxLjQxNHptLTIxIDIxcy0xLjQxNCAxLjQxNC0yLjgyOCAwczAtMi44MjggMC0yLjgyOGwxLjQxNC0xLjQxNHMxLjQxNC0xLjQxNCAyLjgyOCAwczAgMi44MjggMCAyLjgyOGwtMS40MTQgMS40MTR6TTE2IDMyczAtMiAyLTJzMiAyIDIgMnYyczAgMi0yIDJzLTItMi0yLTJ2LTJ6Ij48L3BhdGg+PGNpcmNsZSBmaWxsPSIjRkZBQzMzIiBjeD0iMTgiIGN5PSIxOCIgcj0iMTAiPjwvY2lyY2xlPjwvc3ZnPg=="
+    };
 }
 
 
@@ -559,7 +568,7 @@ export function editEllipseSize(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'artObject')
                     if(e.content.content.type === 'ellipse')
                     return {
@@ -568,8 +577,8 @@ export function editEllipseSize(State: State, payload: any): State{
                             ...e.content,
                             content:{
                                 ...e.content.content,
-                                radiusX: payload[2].dw,
-                                radiusY: payload[2].dh
+                                radiusX: payload.rx,
+                                radiusY: payload.ry
                             }
                         }
                     }
@@ -585,7 +594,7 @@ export function editCircleColor(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'artObject')
                     if(e.content.content.type === 'ellipse')
                     return {
@@ -594,7 +603,7 @@ export function editCircleColor(State: State, payload: any): State{
                             ...e.content,
                             content:{
                                 ...e.content.content,
-                                color: payload[2]
+                                color: payload.color
                             }
                         }
                     }
@@ -626,7 +635,7 @@ export function editRectangleColor(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'artObject')
                     if(e.content.content.type === 'rectangle')
                     return {
@@ -635,7 +644,7 @@ export function editRectangleColor(State: State, payload: any): State{
                             ...e.content,
                             content:{
                                 ...e.content.content,
-                                color: payload[2]
+                                color: payload.color
                             }
                         }
                     }
@@ -652,7 +661,7 @@ export function editRectangleRightBottom(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'artObject')
                     if(e.content.content.type === 'rectangle')
                     return {
@@ -661,10 +670,7 @@ export function editRectangleRightBottom(State: State, payload: any): State{
                             ...e.content,
                             content:{
                                 ...e.content.content,
-                                rightBottom: {
-                                    x: payload[2].dw,
-                                    y: payload[2].dh
-                                }
+                                rightBottom: payload.size
                             }
                         }
                     }
@@ -695,12 +701,13 @@ export function createTriangle(): Triangle{
     };
 }
 export function moveTriangleLocationPoints(State: State, payload: any): State{
+    console.log(payload)
     return {
         ...State,
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'artObject')
                     if(e.content.content.type === 'triangle')
                     return {
@@ -710,16 +717,16 @@ export function moveTriangleLocationPoints(State: State, payload: any): State{
                             content:{
                                 ...e.content.content,
                                 locationPoint1: {
-                                    x: payload[2].x1,
-                                    y: payload[2].y1
+                                    x: payload.x1,
+                                    y: payload.y1
                                 },
                                 locationPoint2: {
-                                    x: payload[2].x2,
-                                    y: payload[2].y2
+                                    x: payload.x2,
+                                    y: payload.y2
                                 },
                                 locationPoint3: {
-                                    x: payload[2].x3,
-                                    y: payload[2].y3
+                                    x: payload.x3,
+                                    y: payload.y3
                                 }
                             }
                         }
@@ -736,7 +743,7 @@ export function editTriangleColor(State: State, payload: any): State{
         canvas:{
             ...State.canvas,
             blocks: State.canvas.blocks.map((e) =>{ 
-                if(payload[1] === e.id){
+                if(payload.id === e.id){
                     if(e.content.contentType === 'artObject')
                     if(e.content.content.type === 'triangle')
                     return {
@@ -745,7 +752,7 @@ export function editTriangleColor(State: State, payload: any): State{
                             ...e.content,
                             content:{
                                 ...e.content.content,
-                                color: payload[2]
+                                color: payload.color
                             }
                         }
                     }
@@ -755,3 +762,4 @@ export function editTriangleColor(State: State, payload: any): State{
         }
     }
 }
+

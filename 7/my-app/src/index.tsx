@@ -1,34 +1,30 @@
-import React, { useState } from 'react';
+
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { CreateObject } from './tools/CreateObject';
-import styles from './index.module.css'
-import { CreateTemplates } from './tools/Templates';
-import { addChangeEditorHandler, dispatch, getState } from './state';
-import { createState, State, setectBlocks } from "./store/functions/funtions";
-import { DeleteObjects } from './tools/DeleteObjects';
-import { JsxElement } from 'typescript';
-import { ExportCard } from './tools/ExportCard';
+import { createState } from "./store/functions/funtions";
 import { Provider } from 'react-redux';
-import { createStoreHook } from 'react-redux/es/exports';
-import { createStore, legacy_createStore } from 'redux';
-import { addBlockReducer } from './store/reducers/addBlockReduser';
-import { configureStore } from '@reduxjs/toolkit'
+import { createStore } from 'redux';
+import { Reducer } from './store/reducers/Reducer';
 
-let state = createState();
+import * as initialState from './templates.json'
 
-const store = configureStore({reducer: addBlockReducer});
+const state = createState([initialState[0], initialState[1], initialState[2] ]);
+
+export const store = createStore(Reducer, state);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-function render() {
+export function render() {
+  console.log(store.getState().templates)
   root.render(
     <Provider store={store}>
       <App />
     </Provider>
   );
 }
-
 render()
+const unsubscribe = store.subscribe(render)
+unsubscribe()
+

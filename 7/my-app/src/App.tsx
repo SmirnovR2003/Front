@@ -1,49 +1,80 @@
-import React, { useRef, useState } from 'react';
-import {Text} from './objects/Text'
-import {Pictures} from './objects/Picture'
-import { ArtObjects } from './objects/ArtObject';
+import { useState } from 'react';
 import styles from './index.module.css'
-import { currHistory, prevHistory, setectBlocks, State } from "./store/functions/funtions";
-import { dispatch } from './state';
-import { Resizable } from 're-resizable';
-import { ExportCard } from './tools/ExportCard';
+import { State } from "./store/functions/funtions";
 import { CreateObject } from './tools/CreateObject';
-import { CreateTemplates } from './tools/Templates';
-import { DeleteObjects } from './tools/DeleteObjects';
 import { CollectingApp } from './objects/CollectingApp';
-import { Popup } from './tools/Popups/PopupWindow';
-import { useSelector } from 'react-redux';
+import { PicturePopup } from './tools/Popups/PicturePopup';
+import { useDispatch } from 'react-redux';
+import { store } from '.';
+import { connect } from 'react-redux';
+import { TemplatesPopup } from './tools/Popups/TemplatsePopu';
+import { editor1 } from './objects';
+import { DownloadPopup } from './tools/Popups/DownloadPopup';
+import { CanvasPicturePopup } from './tools/Popups/CanvasPicturePopup';
+
+function mapStateToProps(state:State) {
+  return state
+};
 
 function App() {
-  const [showPopup, setShowPopup] = useState(false)
+  const [showPicturePopup, setShowPicturePopup] = useState(false)
+  const [showCanvasPicturePopup, setShowCanvasPicturePopup] = useState(false)
+  const [showTemplatesPopup, setShowTemplatesPopup] = useState(false)
+  const [showDownloadPopup, setShowDownloadPopup] = useState(false)
 
-  let state = useSelector(state =>  {return state})
+  const [isWindowClicked, setIsWindowClicked] = useState(false)
+  const [isWindowClickedForContextMenu, setIsWindowClickedForContextMenu] = useState(false)
 
-  return <div 
-    className={styles.box}
+
+  const dispatch = useDispatch()
+
+
+  return  <div 
+            className={styles.box}
+            onClick={ e => {
+              setIsWindowClickedForContextMenu(!isWindowClickedForContextMenu)
+              setIsWindowClicked(!isWindowClicked)
+              if(!e.defaultPrevented){
+                dispatch({type:"SELECT_BLOCKS", ids: []})
+              }
+            }}
+
+            onContextMenu={ e => {
+              if(!e.defaultPrevented){
+                dispatch({type:"SELECT_BLOCKS", ids: []})
+                setIsWindowClickedForContextMenu(!isWindowClickedForContextMenu)
+                setIsWindowClicked(!isWindowClicked)
+              }
+            }}
+            onKeyDown={ e => {
+              if(e.ctrlKey && e.key == 'z'){
+                dispatch({type: "PREV_HISTORY"})
+                dispatch({type:"SELECT_BLOCKS", ids: []})
+                e.preventDefault()
+              }
+              else if(e.ctrlKey && e.key == 'y'){
+                dispatch({type: "CURR_HISTORY"})
+                dispatch({type:"SELECT_BLOCKS", ids: []})
+                e.preventDefault()
+              }
+            }}
+          >
+            {showPicturePopup && <PicturePopup handleClose={setShowPicturePopup} popupState={showPicturePopup} />}
+            {showCanvasPicturePopup && <CanvasPicturePopup handleClose={setShowCanvasPicturePopup} popupState={showCanvasPicturePopup} />}
+            {showDownloadPopup && <DownloadPopup handleClose={setShowDownloadPopup} popupState={showDownloadPopup} />}
+            {showTemplatesPopup && <TemplatesPopup state={store.getState()} handleClose={setShowTemplatesPopup} popupState={showTemplatesPopup} />}
     
-    onKeyDown={ e => {
-      if(e.ctrlKey && e.key == 'z'){
-        dispatch(prevHistory, [])
-        dispatch(setectBlocks, [])
-        e.preventDefault()
-      }
-      else if(e.ctrlKey && e.key == 'y'){
-        dispatch(currHistory, [])
-        dispatch(setectBlocks, [])
-        e.preventDefault()
-      }
-    }}
-  >
-    {showPopup && <Popup handleClose={setShowPopup} popupState={showPopup} />}
-    <div>
-    <CreateObject showPopup={setShowPopup}  />
-    <CreateTemplates />
-    <DeleteObjects />
-    <ExportCard />
-    <CollectingApp editor={state}/>
-    </div>
-  </div>
+            <CreateObject showPicturePopup={setShowPicturePopup} showTemplatesPopup={setShowTemplatesPopup} showDowmloadPopup={setShowDownloadPopup} />
+    
+            <CollectingApp  
+              canvas={store.getState().canvas} 
+              scale={1} 
+              isTemplate={false} 
+              showCanvasPicturePopup={setShowCanvasPicturePopup}
+              popupState={showCanvasPicturePopup}
+              isWindowClicked={isWindowClicked}
+              isWindowClickedForContextMenu={isWindowClickedForContextMenu}
+            />
+          </div>
 }
-
-export default App;
+export default connect(mapStateToProps)(App);
